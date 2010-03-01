@@ -12,7 +12,7 @@ var forms = {
     });
     macros.push(name);
     eval(macro);
-    return macro;
+    return "/* macro */\n"+macro;
   },
   'array':     function() {
     return _.reduce(arguments, [], function(xs, y) { xs.push(compile(y)); return xs; });

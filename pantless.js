@@ -1,7 +1,7 @@
 load(["lib/underscore.js"]);
 load(["lib/json2.js"]);
 
-var infix = ['+', '-', '*', '/', '<', '>', '<=', '>='];
+var infix = ['+', '-', '*', '/', '<', '>', '<=', '>=', '=='];
 var macros = [];
 
 var forms = {
@@ -26,7 +26,7 @@ var forms = {
              }).join('') + "null";
   },
   'def':      function(name, body) {
-    return name + " = " + compile(body) + ";";
+    return name + " = " + compile(body);
   },
   'fn':       function(arglist, body) {
     return "function("+arglist.join(",")+") {\n return " + compile(body) + ";\n}";
@@ -79,6 +79,6 @@ _.each([
 
   ['test_unless1'],
 
-  ['test_unless2']
+  ['test_unless2'],
 
-], function(sexp) { print(compile(sexp)); });
+], function(sexp) { print(compile(sexp)+";\n"); });

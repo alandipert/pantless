@@ -58,27 +58,35 @@ function compile(exp) {
 
 _.each([
 
+  /* a macro providing a shorthand for [def [fn...]] */
   ['defmacro', 'defn', ['name', 'args', 'body'],
     ['array', ['quote', 'def'], 'name', ['array', ['quote', 'fn'], ['quote', 'args'], 'body']]],
 
+  /* ye olde tail recursive fact() */
   ['defn', 'fact', ['n'],
     ['if', ['<=', 'n', 2],
       'n',
       ['*', 'n', ['fact', ['-', 'n', 1]]]]],
 
+  /* a control flow macro, the opposite of 'when' */
   ['defmacro', 'unless', ['expr', 'form'],
     ['array', ['quote', 'if'], 'expr', null, 'form']],
 
+  /* since false, print stuff */
   ['defn', 'test_unless1', [],
     ['unless', false, ['print', "this should print"]]],
 
+  /* since true, don't */
   ['defn', 'test_unless2', [],
     ['unless', true, ['print', "this should not print"]]],
 
+  /* should be 120 */
   ['print', ['fact', 5]],
 
+  /* should doit */
   ['test_unless1'],
 
+  /* shouldn't doit */
   ['test_unless2'],
 
 ], function(sexp) { print(compile(sexp)+";\n"); });

@@ -48,8 +48,7 @@ function compile(exp) {
       return forms[first].apply(this, rest);
     } else {
       return first + "(" + _.map(rest, function(x) { 
-        var compiled = compile(x);
-        return _.isString(x) ? JSON.stringify(compiled) : compiled; 
+        return _.isString(x) ? JSON.stringify(compile(x)) : compile(x); 
       }).join(',') + ")";
     }
   } else {

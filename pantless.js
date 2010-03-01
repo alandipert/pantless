@@ -22,7 +22,7 @@ var program = [
   ['unless', ['<', 20, 10], ['print', "this should print"]],
 
   /* should not print; true == true */
-  ['unless', true, ['print', "this should not print"]],
+  ['unless', true, ['print', "this should not print"]]
 
 ];
 

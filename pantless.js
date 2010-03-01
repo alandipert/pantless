@@ -3,6 +3,7 @@ load(["lib/json2.js"]);
 
 var infix = ['+', '-', '*', '/', '<', '>', '<=', '>=', '=='];
 var macros = [];
+var defs = [];
 
 var forms = {
   'defmacro': function(name, arglist, body) {
@@ -12,7 +13,7 @@ var forms = {
     });
     macros.push(name);
     eval(macro);
-    return "/* macro */\n"+macro;
+    return "macro";
   },
   'array':     function() {
     return _.reduce(arguments, [], function(xs, y) { xs.push(compile(y)); return xs; });
@@ -26,6 +27,7 @@ var forms = {
              }).join('') + "null";
   },
   'def':      function(name, body) {
+    defs.push(name);
     return name + " = " + compile(body);
   },
   'fn':       function(arglist, body) {
@@ -48,7 +50,7 @@ function compile(exp) {
       return forms[first].apply(this, rest);
     } else {
       return first + "(" + _.map(rest, function(x) { 
-        return _.isString(x) ? JSON.stringify(compile(x)) : compile(x); 
+        return _.isString(x) && !_.include(defs,x) ? JSON.stringify(compile(x)) : compile(x); 
       }).join(',') + ")";
     }
   } else {
@@ -68,25 +70,30 @@ _.each([
       'n',
       ['*', 'n', ['fact', ['-', 'n', 1]]]]],
 
+  ['def', 'fact5', ['fact', 5]],
+
+  ['print', 'fact5'],
+
   /* a control flow macro, the opposite of 'when' */
   ['defmacro', 'unless', ['expr', 'form'],
     ['array', ['quote', 'if'], 'expr', null, 'form']],
 
-  /* since false, print stuff */
-  ['defn', 'test_unless1', [],
-    ['unless', false, ['print', "this should print"]]],
+  /* should print: (< 20 10) is false */
+  ['unless', ['<', 20, 10], ['print', "this should print"]],
 
-  /* since true, don't */
-  ['defn', 'test_unless2', [],
-    ['unless', true, ['print', "this should not print"]]],
+  /* should not print; true == true */
+  ['unless', true, ['print', "this should not print"]],
 
-  /* should be 120 */
-  ['print', ['fact', 5]],
+], function(sexp) { var c = compile(sexp); if(c != "macro") print(c+";"); });
 
-  /* should doit */
-  ['test_unless1'],
+/* generates this:
 
-  /* shouldn't doit */
-  ['test_unless2'],
+fact = function(n) {
+  return n<=2 ? n : n*fact(n-1);
+};
+fact5 = fact(5);
+print(fact5);
+20<10 ? null : print("this should print");
+true ? null : print("this should not print");
 
-], function(sexp) { print(compile(sexp)+";\n"); });
+*/

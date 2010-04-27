@@ -1,1 +1,2 @@
+; this is a comment
 (def add (fn [x y] (+ x y)))

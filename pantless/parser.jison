@@ -4,7 +4,7 @@
 %%
 
 [\s,]+                { /* nothing */ }
-[;].*$                { /* nothing */ }
+[;][^\n]*             { /* nothing */ }
 [\(]                  { return 'LP'; }
 [\)]                  { return 'RP'; }
 [\[]                  { return 'LB'; }

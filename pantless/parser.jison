@@ -9,7 +9,10 @@
 [\)]                  { return 'RP'; }
 [\[]                  { return 'LB'; }
 [\]]                  { return 'RB'; }
-[']                   { return 'RQ'; }
+[']                   { return "RQUOTE"; }
+[`]                   { return "SYNQUOTE"; }
+[~]                   { return "UNQUOTE"; }
+[@]                   { return "SPLUNQUOTE"; }
 ["] {
   var i, c, d, ret = "", tex = yytext;
   while (yy.lexer._input.length > 0 && (c = yy.lexer.input()) !== '"')
@@ -27,7 +30,7 @@
   yytext = ret;
   return (c !== '"' ? '"' : 'QUOTED');
 }
-[^'\s,()\[\]]+        { return 'THING'; }
+[^'`~@\s,()\[\]]+        { return 'THING'; }
 <<EOF>>               { return 'EOF'; }
 
 /lex
@@ -45,8 +48,8 @@ expr
     { $$ =  $2; }
   | LB expr_list RB
     { $$ =  $2; }
-  | RQ expr
-    { $$ = [ "quote", $2 ]; }
+  | quote expr
+    { $$ = [ $1, $2 ]; }
   ;
 
 exprs
@@ -61,6 +64,17 @@ expr_list
     { $$ = [ $1 ]; }
   | expr_list expr
     { $$ = $1.concat([ $2 ]); }
+  ;
+
+quote 
+  : RQUOTE
+    { $$ = "rquote"; }
+  | SYNQUOTE
+    { $$ = "synquote"; }
+  | UNQUOTE
+    { $$ = "unquote"; }
+  | SPLUNQUOTE
+    { $$ = "splunquote"; }
   ;
 
 literal 

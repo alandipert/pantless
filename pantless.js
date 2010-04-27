@@ -1,74 +1,14 @@
-load(["lib/underscore.js"]);
-load(["lib/json2.js"]);
-load(["lisp.js"]);
 
-var source = line = "";
-var timesFailed = 0;
-var magicLol = 10;
+exports.main = function(args) {
+  require("./underscore");
 
-while(timesFailed < magicLol) {
-  if(line = readline()) {
-    source += line + "\n";
-  } else {
-    timesFailed++;
-  }
-}
+  var compile = require("./pantless/compiler").compile,
+      parse = require("./pantless/parser").parse,
+      file = require("file"),
+      i;
 
-var infix = ['+', '-', '*', '/', '<', '>', '<=', '>=', '=='];
-var macros = [];
-var defs = [];
-
-var forms = {
-  'defmacro': function(name, arglist, body) {
-    var macro = forms['def'](name, forms['fn'](arglist, JSON.stringify(body)));
-    _.each(arglist, function(arg) {
-      macro = macro.replace('"'+arg+'"', arg);
+  for (i=1; i<args.length; i++)
+    _.each(parse(file.read(args[i])), function(sexp) {
+      var c = compile(sexp); if(c != "macro") print(c+";"); 
     });
-    macros.push(name);
-    eval(macro);
-    return "macro";
-  },
-  'array':     function() {
-    return _.reduce(arguments, [], function(xs, y) { xs.push(compile(y)); return xs; });
-  },
-  'quote':    function(body) {
-    return body;
-  },
-  'cond':     function() {
-    return _.map(_.partition(arguments, 2), function(pair) {
-               return compile(pair[0]) + " ? " + compile(pair[1]) + " : \n";
-             }).join('') + "null";
-  },
-  'def':      function(name, body) {
-    defs.push(name);
-    return name + " = " + compile(body);
-  },
-  'fn':       function(arglist, body) {
-    return "function("+arglist.join(",")+") {\n return " + compile(body) + ";\n}";
-  },
-  'if':       function(test, if_true, if_false) {
-    return compile(test) + " ? " + compile(if_true) + " : " + compile(if_false);
-  }
 };
-
-function compile(exp) {
-  if(_.isArray(exp)) {
-    var first = _.first(exp);
-    var rest = _.rest(exp);
-    if(_.include(macros, first)) {
-      return compile(compile(eval(first + "(" + _.map(rest, function(x) { return JSON.stringify(x); }) + ")")));
-    } else if(_.include(infix, first)) {
-      return _.map(rest, compile).join(first);
-    } else if(_.include(_.keys(forms), first)) {
-      return forms[first].apply(this, rest);
-    } else {
-      return first + "(" + _.map(rest, function(x) { 
-        return _.isString(x) && !_.include(defs,x) ? JSON.stringify(compile(x)) : compile(x); 
-      }).join(',') + ")";
-    }
-  } else {
-    return exp;
-  }
-}
-
-_.each(parser.parse(source), function(sexp) { var c = compile(sexp); if(c != "macro") print(c+";"); });

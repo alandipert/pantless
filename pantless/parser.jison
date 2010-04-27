@@ -46,6 +46,8 @@ expr
   : literal
   | LP RP
     { $$ = []; }
+  | LB RB
+    { $$ = []; }
   | LP expr_list RP
     { $$ =  $2; }
   | LB expr_list RB

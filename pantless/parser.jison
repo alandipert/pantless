@@ -48,8 +48,14 @@ expr
     { $$ =  $2; }
   | LB expr_list RB
     { $$ =  $2; }
-  | quote expr
-    { $$ = [ $1, $2 ]; }
+  | RQUOTE expr
+    { $$ = [ "rquote", $2]; }
+  | SYNQUOTE expr
+    { $$ = [ "synquote", $2]; }
+  | UNQUOTE expr
+    { $$ = [ "unquote", $2]; }
+  | SPLUNQUOTE expr
+    { $$ = [ "splunquote", $2]; }
   ;
 
 exprs
@@ -64,17 +70,6 @@ expr_list
     { $$ = [ $1 ]; }
   | expr_list expr
     { $$ = $1.concat([ $2 ]); }
-  ;
-
-quote 
-  : RQUOTE
-    { $$ = "rquote"; }
-  | SYNQUOTE
-    { $$ = "synquote"; }
-  | UNQUOTE
-    { $$ = "unquote"; }
-  | SPLUNQUOTE
-    { $$ = "splunquote"; }
   ;
 
 literal 

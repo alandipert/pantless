@@ -1,45 +1,18 @@
-var program = [
-
-  /* a macro providing a shorthand for [def [fn...]] */
-  ['defmacro', 'defn', ['name', 'args', 'body'],
-    ['array', ['quote', 'def'], 'name', ['array', ['quote', 'fn'], ['quote', 'args'], 'body']]],
-
-  /* ye olde tail recursive fact() */
-  ['defn', 'fact', ['n'],
-    ['if', ['<=', 'n', 2],
-      'n',
-      ['*', 'n', ['fact', ['-', 'n', 1]]]]],
-
-  ['def', 'fact5', ['fact', 5]],
-
-  ['print', 'fact5'],
-
-  /* a control flow macro, the opposite of 'when' */
-  ['defmacro', 'unless', ['expr', 'form'],
-    ['array', ['quote', 'if'], 'expr', null, 'form']],
-
-  /* should print: (< 20 10) is false */
-  ['unless', ['<', 20, 10], ['print', "this should print"]],
-
-  /* should not print; true == true */
-  ['unless', true, ['print', "this should not print"]]
-
-];
-
-/* generates this:
- 
-fact = function(n) {
-  return n<=2 ? n : n*fact(n-1);
-};
-fact5 = fact(5);
-print(fact5);
-20<10 ? null : print("this should print");
-true ? null : print("this should not print");
-
-*/
-
 load(["lib/underscore.js"]);
 load(["lib/json2.js"]);
+load(["lisp.js"]);
+
+var source = line = "";
+var timesFailed = 0;
+var magicLol = 10;
+
+while(timesFailed < magicLol) {
+  if(line = readline()) {
+    source += line + "\n";
+  } else {
+    timesFailed++;
+  }
+}
 
 var infix = ['+', '-', '*', '/', '<', '>', '<=', '>=', '=='];
 var macros = [];
@@ -98,4 +71,4 @@ function compile(exp) {
   }
 }
 
-_.each(program, function(sexp) { var c = compile(sexp); if(c != "macro") print(c+";"); });
+_.each(parser.parse(source), function(sexp) { var c = compile(sexp); if(c != "macro") print(c+";"); });

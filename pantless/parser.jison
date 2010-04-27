@@ -44,6 +44,8 @@ prg
 
 expr
   : literal
+  | LP RP
+    { $$ = []; }
   | LP expr_list RP
     { $$ =  $2; }
   | LB expr_list RB

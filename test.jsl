@@ -1,1 +1,1 @@
-`~@((a b c) (d e f))
+(def add (fn [x y] (+ x y)))

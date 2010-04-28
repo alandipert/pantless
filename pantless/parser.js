@@ -18,7 +18,7 @@ case 5: this.$ =  $$[$0-3+2-1];
 break;
 case 6: this.$ =  $$[$0-3+2-1]; 
 break;
-case 7: this.$ = [ "rquote", $$[$0-2+2-1]]; 
+case 7: this.$ = [ "quote", $$[$0-2+2-1]]; 
 break;
 case 8: this.$ = [ "synquote", $$[$0-2+2-1]]; 
 break;

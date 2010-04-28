@@ -45,7 +45,7 @@
     nativeIsArray      = Array.isArray,
     nativeKeys         = Object.keys;
 
-  // Create a safe reference to the Underscore object for use below.
+  // Create a safe reference to the Underscore object for reference below.
   var _ = function(obj) { return new wrapper(obj); };
 
   // Export the Underscore object for CommonJS.
@@ -55,7 +55,7 @@
   root._ = _;
 
   // Current version.
-  _.VERSION = '1.0.2';
+  _.VERSION = '0.6.0';
 
   // ------------------------ Collection Functions: ---------------------------
 
@@ -209,7 +209,7 @@
     return result.value;
   };
 
-  // Sort the object's values by a criterion produced by an iterator.
+  // Sort the object's values by a criteria produced by an iterator.
   _.sortBy = function(obj, iterator, context) {
     return _.pluck(_.map(obj, function(value, index, list) {
       return {
@@ -263,6 +263,24 @@
    //check allows it to work with _.map.
   _.rest = function(array, index, guard) {
     return slice.call(array, _.isUndefined(index) || guard ? 1 : index);
+  };
+
+  // Given an an array of even length, construct an object
+  // with property name of _.first(y) and value of _.last(y)
+  // Similar to Hash[*Array] in Ruby
+  _.splat = function(array) {
+    return _.reduce(array, {}, function(memo, el, i) {
+      if (i % 2 == 0) memo[el] = array[i + 1];
+      return memo;
+    });
+  };
+
+  // Returns a new Array of Arrays, each of n items 
+  _.partition = function(array, n) {
+    var results = [];
+    for(var i = 0; i+n <= array.length; i += n) 
+      results.push(slice.call(array, i, i+n));
+    return results;
   };
 
   // Get the last element of an array.
@@ -432,12 +450,10 @@
     return _.filter(_.keys(obj), function(key){ return _.isFunction(obj[key]); }).sort();
   };
 
-  // Extend a given object with all the properties in passed-in object(s).
-  _.extend = function(obj) {
-    each(_.rest(arguments), function(source) {
-      for (var prop in source) obj[prop] = source[prop];
-    });
-    return obj;
+  // Extend a given object with all of the properties in a source object.
+  _.extend = function(destination, source) {
+    for (var property in source) destination[property] = source[property];
+    return destination;
   };
 
   // Create a (shallow-cloned) duplicate of an object.
@@ -485,13 +501,13 @@
     // Different object sizes?
     if (aKeys.length != bKeys.length) return false;
     // Recursive comparison of contents.
-    for (var key in a) if (!(key in b) || !_.isEqual(a[key], b[key])) return false;
+    for (var key in a) if (!_.isEqual(a[key], b[key])) return false;
     return true;
   };
 
   // Is a given array or object empty?
   _.isEmpty = function(obj) {
-    if (_.isArray(obj) || _.isString(obj)) return obj.length === 0;
+    if (_.isArray(obj)) return obj.length === 0;
     for (var key in obj) if (hasOwnProperty.call(obj, key)) return false;
     return true;
   };
@@ -504,12 +520,12 @@
   // Is a given value an array?
   // Delegates to ECMA5's native Array.isArray
   _.isArray = nativeIsArray || function(obj) {
-    return !!(obj && obj.concat && obj.unshift && !obj.callee);
+    return !!(obj && obj.concat && obj.unshift);
   };
 
   // Is a given variable an arguments object?
   _.isArguments = function(obj) {
-    return obj && obj.callee;
+    return obj && _.isNumber(obj.length) && !obj.concat && !obj.substr && !obj.apply && !propertyIsEnumerable.call(obj, 'length');
   };
 
   // Is a given value a function?

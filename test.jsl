@@ -1,1 +1,19 @@
-`~@((a b c) (d e f))
+(defmacro defn [name args body]
+  (array 'def name (array 'fn 'args body)))
+
+(defn Y [f]
+  ((fn [g]
+      (f (g g)))
+   (fn [g]
+      (fn [x]
+        ((f (g g)) x)))))
+
+(defn fib [k]
+  ((Y (fn [f]
+        (fn [n]
+          (cond
+             (== n 0) 0
+             (== n 1) 1
+             (+ (f (- n 1)) (f (- n 2))))))) k))
+
+(print (fib 10))

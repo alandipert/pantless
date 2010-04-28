@@ -1,19 +1,18 @@
+;; shortens def/fn
 (defmacro defn [name args body]
   (array 'def name (array 'fn 'args body)))
 
-(defn Y [f]
-  ((fn [g]
-      (f (g g)))
-   (fn [g]
-      (fn [x]
-        ((f (g g)) x)))))
+;; evaluates test. if true, evaluates then
+(defmacro when [test then]
+  (array 'if test then null))
+ 
+;; computes n!
+(defn fact [n]
+  (if (<= n 2)
+    n
+    (* n (fact (- n 1)))))
 
-(defn fib [k]
-  ((Y (fn [f]
-        (fn [n]
-          (cond
-             (== n 0) 0
-             (== n 1) 1
-             (+ (f (- n 1)) (f (- n 2))))))) k))
+(print (fact 5))
 
-(print (fib 10))
+(when false
+  (print "you shouldn't see me printed!"))

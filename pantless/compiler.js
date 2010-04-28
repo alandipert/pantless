@@ -62,6 +62,7 @@ function compile(exp) {
     } else {
       return first + "(" + _.map(rest, function(x) { 
         return _.isString(x) && !_.include(defs,x) ? JSON.stringify(compile(x)) : compile(x); 
+        //return compile(x);
       }).join(',') + ")";
     }
   } else {

@@ -4,7 +4,7 @@
 %%
 
 [\s,]+                { /* nothing */ }
-[;].*$                { /* nothing */ }
+[;][^\n]*             { /* nothing */ }
 [\(]                  { return 'LP'; }
 [\)]                  { return 'RP'; }
 [\[]                  { return 'LB'; }
@@ -44,6 +44,10 @@ prg
 
 expr
   : literal
+  | LP RP
+    { $$ = []; }
+  | LB RB
+    { $$ = []; }
   | LP expr_list RP
     { $$ =  $2; }
   | LB expr_list RB

@@ -1,2 +1,2 @@
-*.swp
-*.swo
+*.sw[op]
+pantless/parser.js

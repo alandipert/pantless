@@ -53,7 +53,7 @@ expr
   | LB expr_list RB
     { $$ =  $2; }
   | RQUOTE expr
-    { $$ = [ "rquote", $2]; }
+    { $$ = [ "quote", $2]; }
   | SYNQUOTE expr
     { $$ = [ "synquote", $2]; }
   | UNQUOTE expr

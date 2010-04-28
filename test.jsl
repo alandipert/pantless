@@ -1,3 +1,27 @@
-; this is a comment
-(def add (fn [x y] ; asdfasdf
-    (+ x y)))
+;; shortens def/fn
+(defmacro defn [name args body]
+  (array 'def name (array 'fn 'args body)))
+
+;; computes n!
+(defn fact [n]
+  (if (<= n 2)
+    n
+    (* n (fact (- n 1)))))
+
+(print "The factorial of 5 is:")
+(print (fact 5))
+
+(defn yfib [k]
+  (((fn [r]
+      ((fn [f] (f f))
+       (fn [f]
+         (r (fn [x] ((f f) x))))))
+    (fn [f]
+        (fn [n]
+          (cond
+            (== n 0) 0
+            (== n 1) 1
+            (+ (f (- n 1)) (f (- n 2))))))) k))
+
+(print "The 10th fibonacci number is:")
+(print (yfib 10))

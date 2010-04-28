@@ -78,8 +78,14 @@ expr_list
 
 literal 
   : THING {
-    var n = new Number($1.match(/^0[0-9]+$/) ? parseInt($1,8) : $1);
-      $$ = (n <= 0 || n > 0) ? 0+n : $1;
+      var type,n=new Number($1.match(/^0[0-9]+$/) ? parseInt($1,8) : $1);
+      $$ = new Object();
+      type = (n <= 0 || n > 0) ? "num" : "sym";
+      $$[type] = (n <= 0 || n > 0) ? 0+n : $1;
     }
-  | QUOTED ;
+  | QUOTED {
+      $$ = new Object();
+      $$.str = $1;
+    }
+  ;
 

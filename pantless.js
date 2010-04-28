@@ -8,7 +8,5 @@ exports.main = function(args) {
       i;
 
   for (i=1; i<args.length; i++)
-    _.each(parse(file.read(args[i])), function(sexp) {
-        var c = compile(sexp); if(c != "macro") print(JSON.stringify(c,null,2)+";"); 
-    });
+    print(JSON.stringify(parse(file.read(args[i])),null,2));
 };

@@ -35,8 +35,15 @@ break;
 case 14: this.$ = $$[$0-2+1-1].concat([ $$[$0-2+2-1] ]); 
 break;
 case 15:
-    var n = new Number($$[$0-1+1-1].match(/^0[0-9]+$/) ? parseInt($$[$0-1+1-1],8) : $$[$0-1+1-1]);
-      this.$ = (n <= 0 || n > 0) ? 0+n : $$[$0-1+1-1];
+      var type,n=new Number($$[$0-1+1-1].match(/^0[0-9]+$/) ? parseInt($$[$0-1+1-1],8) : $$[$0-1+1-1]);
+      this.$ = new Object();
+      type = (n <= 0 || n > 0) ? "num" : "sym";
+      this.$[type] = (n <= 0 || n > 0) ? 0+n : $$[$0-1+1-1];
+    
+break;
+case 16:
+      this.$ = new Object();
+      this.$.str = $$[$0-1+1-1];
     
 break;
 }

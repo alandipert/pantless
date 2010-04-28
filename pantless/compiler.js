@@ -1,4 +1,4 @@
-var infix = ['+', '-', '*', '/', '<', '>', '<=', '>=', '=='];
+var infix = ['+', '-', '*', '/', '<', '>', '<=', '>=', '==', '||'];
 var macros = [];
 var defs = [];
 
@@ -25,7 +25,7 @@ var forms = {
   'cond': function() {
     return _.map(_.partition(arguments, 2), function(pair) {
                return compile(pair[0]) + " ? " + compile(pair[1]) + " : \n";
-             }).join('') + arguments.length % 2 == 0 ? "null" : compile(_.last(arguments));
+             }).join('') + (arguments.length % 2 == 0 ? "null" : compile(_.last(arguments)));
   },
   // "global" definition
   'def': function(name, body) {
